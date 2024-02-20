@@ -1,0 +1,108 @@
+{
+	action: updateRules,
+	tps: [{
+			time: 30,
+			count: 3,
+			remote_url:,
+			port:11223
+		}
+	],
+	scripts:[
+		{
+			name: 脚本名称,
+            version: 脚本版本
+		}
+	],
+	log_ip:[10.111.1.1,10.111.1.2],
+	black_ip: [{
+        127.0.0.1: {
+			state:on/off,
+			action:allow/deny/delay,
+			delay_time:10,
+            bind_time: 30,//封禁时间(秒) 
+			time_out:6,//访问频率时间范围
+			connect_count:10 //连接次数   整体相当于6秒内访问超过10次，封禁30秒
+        }
+    }, {
+        192.168.20.166: {
+			state:on/off,
+			action:allow/deny/delay,
+			delay_time:10,
+            bind_time: 30,
+			time_out: 6,
+			connect_count: 10
+        }
+    }],
+	uri_rules:[
+		{
+			uri:\\.(htaccess|bash_history),
+			state:on,
+			hostname:*
+	},
+	{
+			uri:\\.(bak|inc|old|mdb|sql|backup|java|class|tgz|gz|tar|zip)$,
+			state:on,
+			hostname:*
+	}
+	],
+	post_rules:[{
+        state: on,
+        id:1,
+        hostname: [*,],
+        posts_data:\\.\\./,
+        action: deny
+	},
+    {
+        state: on,
+        id:2,
+        hostname: [*,],
+        posts_data:select.+(from|limit),
+        action: deny
+    } ,
+	{
+        state: on,
+        id:3,
+        hostname: [*,],
+        posts_data: [(?:(union(.*?)select))],
+        action: deny
+    }],
+	system_info:{
+		data: [{
+			port: 8081,
+			normal_server: http://192.168.188.111,
+			protocol: http,
+			normal_host: 192.168.188.11,
+			innormal_host: www.baidu.com,
+			innormal_server: http://www.baidu.com,
+			normal_port:11668,
+			innormal_port:
+		}, {
+			port: 8082,
+			normal_server: http://192.168.188.155,
+			protocol: http,
+			normal_host: 192.168.188.155,
+			innormal_host: github.com,
+			innormal_server: https://github.com,
+			normal_port:11668,
+			innormal_port:
+		},{
+			port: 11223,
+			normal_server: http://192.168.188.155:8088,
+			protocol: http,
+			normal_host: 192.168.188.155,
+			innormal_host: github.com,
+			innormal_server: https://github.com,
+			normal_port:11668,
+			innormal_port:
+		},{
+			port: 8084,
+			normal_server: 129.28.104.129,
+			normal_port:16688,
+			protocol: tcp,
+			normal_host: ,
+			innormal_host: ,
+			innormal_server: 14.215.177.39,
+			innormal_port:80
+		}]
+	}
+}

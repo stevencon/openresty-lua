@@ -1,0 +1,20 @@
+  {
+    ip: 192.168.30.16,
+    host:www.lsjt.cn,
+    is_domain:true,
+    state: on,
+    action: traction,
+    redirect_server: ,
+    redirect_host: ,
+    is_delay: on,
+    delay_time: 15,
+    port_rule: 8000,
+    uri_rule: 111,
+    header_rule: css,
+    system_id: 41c7eaf6-0a0b-4c30-8949-75c7dc39d8e6,
+    strategy_expire_time: 7000,//策略生效时间（秒为单位）
+    bind_time: 30,//封禁时间(秒)
+    time_out: 6,//访问频率时间范围
+    connect_count: 10,//连接次数   整体相当于6秒内访问超过10次，封禁30秒
+    crud:addOrUpdate
+    }

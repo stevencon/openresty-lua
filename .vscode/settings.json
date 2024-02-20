@@ -1,0 +1,10 @@
+{
+    "Lua.diagnostics.globals": [
+        "start_time",
+        "ip_count",
+        "getStragetyInfo"
+    ],
+    "Lua.diagnostics.disable": [
+        512
+    ]
+}

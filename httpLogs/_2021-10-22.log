@@ -1,0 +1,1 @@
+{"server_port":"8081","req_url":"\/api\/sys\/login\/getCaptcha","req_data":"请求的数据为：sourceIp:127.0.0.1\t1634891197.59","reqIp":"127.0.0.1","local_time":"2021-10-22 16:26:37","user_agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/94.0.4606.81 Safari\/537.36","server_name":"","remote_port":"8214"}

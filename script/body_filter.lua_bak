@@ -1,0 +1,48 @@
+local h = ngx.resp.get_headers()
+
+if
+    StrUtil.IsStrInclude(h['content-type'], 'text/html', 'text/plain', 'application/json') == false and
+        StrUtil.IsStrInclude(ngx.var.routeUrl, '.js') == false
+ then
+    return
+end
+ngx.log(ngx.DEBUG, 1)
+local chunk, eof = ngx.arg[1], ngx.arg[2]
+
+if ngx.ctx.buffered == nil then
+    ngx.ctx.buffered = {}
+end
+
+if chunk ~= '' and not ngx.is_subrequest then
+    table.insert(ngx.ctx.buffered, chunk)
+
+    ngx.arg[1] = nil
+end
+
+if eof then
+    --ngx.log(ngx.DEBUG, 2)
+    local whole = table.concat(ngx.ctx.buffered)
+    ngx.ctx.buffered = nil
+    --whole = string.gsub(whole, 'href=\/', 'href=\')
+    --whole = string.gsub(whole, 'src=\/', 'src=\')
+    ngx.log(ngx.DEBUG, ngx.var.uri)
+    whole = string.gsub(whole, '/>', ' />')
+    whole = string.gsub(whole, '//www.baidu.com', '')
+    --if string.find(ngx.var.uri, '.css') == nil then
+    whole = string.gsub(whole, '/', '')
+    --end
+    --whole = string.gsub(whole, '([^\/]*).js\', '\/plugin_login/1/2%1')
+    --whole = string.gsub(whole, '([^\/]*).css\', '\/plugin_login/1/2%1')
+
+    whole =
+        string.gsub(
+        whole,
+        '</title>',
+        '</title><base href=/center/' .. ngx.var.userId .. '/' .. ngx.var.systemId .. '/ />'
+    )
+
+    -- whole = string.gsub(whole, '/assets/','/plugin_login/1/2/assets/')
+    --ngx.log(ngx.DEBUG, whole)
+    -- 重新赋值响应数据，以修改后的内容作为最终响应
+    ngx.arg[1] = whole
+end

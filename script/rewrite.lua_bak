@@ -1,0 +1,30 @@
+local reqUtil = require('ReqUtils')
+local reqIp = reqUtil.getReqIp()
+
+ngx.log(ngx.DEBUG, '进行rewrite')
+ngx.log(ngx.DEBUG, 'server_port:' .. ngx.var.server_port)
+ngx.log(ngx.DEBUG, 'reqIp:' .. reqIp)
+
+--判断action
+local action = ngx.ctx.action
+local delayTime = ngx.ctx.delayTime
+
+if action ~= nil then
+    if action == 'deny' then
+        Log('request deny')
+        ngx.exit(503)
+    elseif action == 'delay' then
+        if delayTime ~= nil then
+            Log('延迟' .. delayTime .. '秒')
+            ngx.sleep(delayTime)
+        else
+            Log('延迟系统默认时间：10秒')
+            ngx.sleep(10)
+        end
+    end
+end
+
+ngx.var.rewrite_url = ngx.ctx.systemTable
+Log('finally_url:' .. ngx.var.rewrite_url)
+ngx.var.route_host = ngx.ctx.host
+Log('finally_host:' .. ngx.var.route_host)

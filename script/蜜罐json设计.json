@@ -1,0 +1,8 @@
+{
+	name: test3,
+	port: 8082,
+	host: ,
+	url: https://github.com,
+	instruction: ins,
+	action:addOrUpdate
+}

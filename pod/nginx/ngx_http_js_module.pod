@@ -1,0 +1,299 @@
+=encoding utf-8
+
+=head1 NAME
+
+ngx_http_js_module - Module ngx_http_js_module
+
+
+
+
+=head1
+
+
+
+The C<ngx_http_js_module> module is used to implement
+location and variable handlers
+in L<njs|index> —
+a subset of the JavaScript language.
+
+
+
+
+
+Download and install instructions are available
+L<here|install>.
+
+
+
+
+=head1 Example Configuration
+
+
+
+The example works since
+L<0.4.0|changes>.
+
+    
+    http {
+        js_import http.js;
+    
+        js_set $foo     http.foo;
+        js_set $summary http.summary;
+    
+        server {
+            listen 8000;
+    
+            location / {
+                add_header X-Foo $foo;
+                js_content http.baz;
+            }
+    
+            location = /summary {
+                return 200 $summary;
+            }
+    
+            location = /hello {
+                js_content http.hello;
+            }
+        }
+    }
+
+
+
+
+
+
+
+The F<http.js> file:
+
+    
+    function foo(r) {
+        r.log("hello from foo() handler");
+        return "foo";
+    }
+    
+    function summary(r) {
+        var a, s, h;
+    
+        s = "JS summary\n\n";
+    
+        s += "Method: " + r.method + "\n";
+        s += "HTTP version: " + r.httpVersion + "\n";
+        s += "Host: " + r.headersIn.host + "\n";
+        s += "Remote Address: " + r.remoteAddress + "\n";
+        s += "URI: " + r.uri + "\n";
+    
+        s += "Headers:\n";
+        for (h in r.headersIn) {
+            s += "  header '" + h + "' is '" + r.headersIn[h] + "'\n";
+        }
+    
+        s += "Args:\n";
+        for (a in r.args) {
+            s += "  arg '" + a + "' is '" + r.args[a] + "'\n";
+        }
+    
+        return s;
+    }
+    
+    function baz(r) {
+        r.status = 200;
+        r.headersOut.foo = 1234;
+        r.headersOut['Content-Type'] = "text/plain; charset=utf-8";
+        r.headersOut['Content-Length'] = 15;
+        r.sendHeader();
+        r.send("nginx");
+        r.send("java");
+        r.send("script");
+    
+        r.finish();
+    }
+    
+    function hello(r) {
+        r.return(200, "Hello world!");
+    }
+    
+    export default {foo, summary, baz, hello};
+
+
+
+
+
+
+=head1 Directives
+
+=head2 js_content
+
+
+B<syntax:> js_content I<I<C<function>> E<verbar> I<C<module.function>>>
+
+
+
+B<context:> I<location>
+
+
+B<context:> I<limit_except>
+
+
+
+
+
+Sets an njs function as a location content handler.
+Since L<0.4.0|changes>,
+a module function can be referenced.
+
+
+
+
+
+
+
+=head2 js_import
+
+
+B<syntax:> js_import I<I<C<module.js>> E<verbar>
+I<C<export_name from module.js>>>
+
+
+
+B<context:> I<http>
+
+
+
+This directive appeared in version 0.4.0.
+
+
+
+
+
+Imports a module that implements location and variable handlers in njs.
+The C<export_name> is used as a namespace
+to access module functions.
+If the C<export_name> is not specified,
+the module name will be used as a namespace.
+
+    
+    js_import http.js;
+
+
+Here, the module name C<http> is used as a namespace
+while accessing exports.
+If the imported module contains C<foo()>,
+C<http.foo> is used to refer to it.
+
+
+
+
+
+Several C<js_import> directives can be specified.
+
+
+
+
+
+
+
+=head2 js_include
+
+
+B<syntax:> js_include I<I<C<file>>>
+
+
+
+B<context:> I<http>
+
+
+
+
+
+Specifies a file that implements location and variable handlers in njs:
+
+    
+    nginx.conf:
+    js_include http.js;
+    location   /version {
+        js_content version;
+    }
+    
+    http.js:
+    function version(r) {
+        r.return(200, njs.version);
+    }
+
+
+
+
+
+
+
+The directive is deprecated since
+L<0.4.0|changes>,
+the L</js_import> directive should be used instead.
+
+
+
+
+
+
+
+=head2 js_path
+
+
+B<syntax:> js_path I<
+I<C<path>>>
+
+
+
+B<context:> I<http>
+
+
+
+This directive appeared in version 0.3.0.
+
+
+
+
+
+Sets an additional path for njs modules.
+
+
+
+
+
+
+
+=head2 js_set
+
+
+B<syntax:> js_set I<
+I<C<$variable>> I<C<function>> E<verbar>
+I<C<module.function>>>
+
+
+
+B<context:> I<http>
+
+
+
+
+
+Sets an njs function for the specified variable.
+Since L<0.4.0|changes>,
+a module function can be referenced.
+
+
+
+
+
+
+
+=head1 Request Argument
+
+
+
+Each HTTP njs handler receives one argument, a request
+L<object|reference>.
+
+
+
+

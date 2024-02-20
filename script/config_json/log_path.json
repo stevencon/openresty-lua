@@ -1,0 +1,8 @@
+{
+    intercept_log_path:intercept_logs,
+    update_system_log_path:update_system_info_logs,
+    logger_path:loggers,
+    http_log_path:httpLogs,
+    tcp_log_path:tcpLogs,
+    project_address:G:\\\\openResty\\\\openresty_drainage\\\\
+}

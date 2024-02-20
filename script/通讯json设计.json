@@ -1,0 +1,48 @@
+
+{
+    action: upgrade,
+    config: {
+        logApiUrl: 日志接口地址,
+        logFormat: 日志上传格式,关键字待定义,
+        homePageUrl: 出现未知错误跳转地址
+    },
+    scripts: [
+        {
+            name: 脚本名称,
+            version: 脚本版本,
+            content: 脚本内容
+        }
+    ],
+    accounts: [
+        {
+            {{userID}}-{{systemId}} : {
+                scriptName: 脚本名称,
+                headers: {
+                    cookie: cookie字符串,
+                    referer: referer,
+                    accept: text/html,application/xhtml+xml,
+                    其他头: 值
+                },
+                customData: {
+                    还未想好,预留: 还未想好,预留
+                },
+                loginJumpUrl: ,
+                loginJumpType: 302,
+                sendLog: true
+            }
+        }
+    ]
+}
+
+
+
+
+action : upgrade,
+    config: {
+        ngx: {
+            maxWorker: 4
+        },
+        lua: {
+            scanPath: /root/lua/?.lua
+        }
+    },
